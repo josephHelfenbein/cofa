@@ -12,12 +12,8 @@ export async function GET() {
         
         if (error) throw error;
         
-        const transactions = data.map(row => 
-        `ID: ${row.id}, Sent At: ${row.sent_at}, Suspicious: ${row.suspicious}, Location: ${row.location}, Receiver: ${row.receiver}, Amount: ${row.amount}`
-        ).join('\n');
-        
-        return new NextResponse(transactions, { status: 200 });
+        return new NextResponse(JSON.stringify(data), { status: 200, headers: { 'Content-Type': 'application/json' } });
     } catch (error:any) {
-        return new NextResponse(`Error fetching transactions: ${error.message}`, { status: 500 });
+        return new NextResponse(JSON.stringify({ error: error.message }), { status: 500, headers: { 'Content-Type': 'application/json' } });
     }
 }
