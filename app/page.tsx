@@ -20,7 +20,17 @@ function MapElements(transactions:any[]) {
     <div key={transaction.id} className="flex flex-col gap-4 p-4 border border-gray-300 rounded-lg w-xl">
       <p className='text-gray-500 text-sm'>{formatTimestamp(transaction.sent_at)}</p>
       <div className='flex justify-between'>
-        <p>To: {transaction.receiver}</p>
+        <div className='flex gap-1'>
+          {
+            transaction.suspicious ? (
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-red-500" viewBox="0 0 20 20" fill="currentColor">
+                <path fillRule="evenodd"
+                      d="M10 2c-4.42 0-8 3.58-8 8s3.58 8 8 8 8-3.58 8-8-3.58-8-8-8zm0 14a1 1 0 110-2 1 1 0 010 2zm0-11a1 1 0 110 2 1 1 0 010-2zm1 3a1 1 0 00-2 0v4a1 1 0 102 0V8z"
+                      clipRule="evenodd"/>
+              </svg>):null
+          }
+          <p>{transaction.receiver}</p>
+        </div>
         <p>${transaction.amount}</p>
       </div>
       <p className='text-sm'>{transaction.location}</p>
@@ -35,7 +45,8 @@ export default function Home() {
     const fetchTransactions = async () => {
       const { data, error } = await supabase
         .from('transactions')
-        .select('id, sent_at, suspicious, location, receiver, amount');
+        .select('id, sent_at, suspicious, location, receiver, amount')
+        .order('sent_at', { ascending: false });
       if (error) {
         console.error('Error fetching transactions:', error);
       } else {
@@ -84,7 +95,7 @@ export default function Home() {
     <div className="grid min-h-screen grid-rows-[20px_1fr_20px] items-center justify-items-center gap-16 p-8 pb-20 font-[family-name:var(--font-geist-sans)] sm:p-20 w-full">
       <main className="row-start-2 flex flex-col items-center gap-8 sm:items-start">
         <div className="flex justify-center flex-col w-full gap-8">
-          <p className="">Transactions</p>
+          <p className="text-center text-lg font-bold">Transactions</p>
           {MapElements(transactionElements)}
         </div>
       </main>
