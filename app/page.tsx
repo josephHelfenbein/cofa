@@ -17,23 +17,25 @@ function formatTimestamp(time:string) {
 
 function MapElements(transactions:any[]) {
   return transactions.map((transaction) => (
-    <div key={transaction.id} className="flex flex-col gap-4 p-4 border border-gray-300 rounded-lg w-xl">
+    <div key={transaction.id} className="flex flex-col gap-2 p-4 border border-gray-300 rounded-lg w-xl">
       <p className='text-gray-500 text-sm'>{formatTimestamp(transaction.sent_at)}</p>
       <div className='flex justify-between'>
-        <div className='flex gap-1'>
-          {
+          <p>{transaction.receiver}</p>
+        <p>${transaction.amount.toFixed(2)}</p>
+      </div>
+      <p className='text-sm'>{transaction.location}</p>
+      {
             transaction.suspicious ? (
+              <div className='flex gap-1'>
               <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-red-500" viewBox="0 0 20 20" fill="currentColor">
                 <path fillRule="evenodd"
                       d="M10 2c-4.42 0-8 3.58-8 8s3.58 8 8 8 8-3.58 8-8-3.58-8-8-8zm0 14a1 1 0 110-2 1 1 0 010 2zm0-11a1 1 0 110 2 1 1 0 010-2zm1 3a1 1 0 00-2 0v4a1 1 0 102 0V8z"
                       clipRule="evenodd"/>
-              </svg>):null
+              </svg>
+              <p className='text-red-500 text-sm'>Flagged as suspicious</p>
+              </div>
+            ):null
           }
-          <p>{transaction.receiver}</p>
-        </div>
-        <p>${transaction.amount}</p>
-      </div>
-      <p className='text-sm'>{transaction.location}</p>
     </div>
   ));
 }
