@@ -78,6 +78,7 @@ def generate_synthetic_transactions(num_of_transactions=1000, fraud_prob=0.02):
 
 # Generate the synthetic dataset
 df = generate_synthetic_transactions(1000, 0.02)
+df.to_csv('dataset/synthetic_transactions.csv', index=False)
 
 print("Synthetic dataset shape:", df.shape)
 print("Fraud distribution:\n", df["fraud"].value_counts())
