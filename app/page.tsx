@@ -1,7 +1,8 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { use, useEffect, useState } from 'react';
 import { supabase } from './supabaseClient';
+import Image from 'next/image';
 
 function formatTimestamp(time:string) {
   const date = new Date(time);
@@ -42,6 +43,7 @@ function MapElements(transactions:any[]) {
 
 export default function Home() {
   const [transactionElements, setTransactionElements] = useState<any[]>([]);
+  const [cardState, setCardState] = useState<boolean>(false);
 
   useEffect(() => {
     const fetchTransactions = async () => {
@@ -92,10 +94,48 @@ export default function Home() {
       channel.unsubscribe();
     };
   }, []);
+  
+  useEffect(() => {
+    const fetchCardState = async () => {
+      const { data, error } = await supabase
+        .from('card')
+        .select('id, active')
+      if (error) {
+        console.error('Error fetching card state:', error);
+      } else {
+        setCardState(data[0].active);
+      }
+    };
+
+    fetchCardState();
+  }, []);
+
+  useEffect(()=>{
+    const channel = supabase
+      .channel('public:card')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'card' }, (payload) => {
+        setCardState(() => {
+          const transaction:any = payload.new;
+
+          return transaction.active;
+        });
+      })
+      .subscribe();
+
+    return () => {
+      channel.unsubscribe();
+    };
+  });
 
   return (
     <div className="grid min-h-screen grid-rows-[20px_1fr_20px] items-center justify-items-center gap-16 p-8 pb-20 font-[family-name:var(--font-geist-sans)] sm:p-20 w-full">
-      <main className="row-start-2 flex flex-col items-center gap-8 sm:items-start">
+      <main className="row-start-2 flex flex-col justify-center gap-8 w-full">
+        <div className='flex justify-center'>
+          {cardState ? null:(
+            <svg className="absolute z-50" xmlns="http://www.w3.org/2000/svg" height="250px" viewBox="0 -770 960 960" width="250px" fill="#70a0f0"><path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/></svg>
+          ) }
+          {cardState ? (<Image src="/credit_card_PNG17-2150236899.png" alt="logo" width={250} height={100} />):(<Image src="/credit_card_PNG17-2150236899.png" alt="logo" className="grayscale" width={250} height={100} />)}
+        </div>
         <div className="flex justify-center flex-col w-full gap-8">
           <p className="text-center text-lg font-bold">Transactions</p>
           {MapElements(transactionElements)}
