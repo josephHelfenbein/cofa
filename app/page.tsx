@@ -71,7 +71,7 @@ export default function Home() {
 
           switch (payload.eventType) {
             case 'INSERT':
-              updatedTransactions.push(transaction);
+              updatedTransactions = [transaction, ...updatedTransactions];
               break;
             case 'UPDATE':
               updatedTransactions = updatedTransactions.map((t) =>
