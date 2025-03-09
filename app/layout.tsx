@@ -16,7 +16,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Credit One Fraud Agent",
+  title: "CUNY One Fraud Agent",
   description: "Agent will call you if it detects a suspicious transaction",
 };
 
