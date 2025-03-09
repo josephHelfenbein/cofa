@@ -138,3 +138,22 @@ model = XGBClassifier(
 )
 
 model.fit(X_train, y_train)
+
+# PART 3 - Testing the model
+y_pred = model.predict(X_test)
+accuracy = accuracy_score(y_test, y_pred)
+precision = precision_score(y_test, y_pred, zero_division=0)
+recall = recall_score(y_test, y_pred, zero_division=0)
+conf_matrix = confusion_matrix(y_test, y_pred)
+
+print("\nModel Evaluation:")
+print(f"Accuracy: {accuracy:.4f}")
+print(f"Precision: {precision:.4f}")
+print(f"Recall: {recall:.4f}")
+print("Confusion Matrix:")
+print(conf_matrix)
+
+# Save model, scaler, and encoder
+joblib.dump(model, "xgb_fraud_model.pkl")
+joblib.dump(scaler, "scaler.pkl")
+joblib.dump(encoder, "encoder.pkl")
