@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "react-hot-toast";
+import Link from "next/link";
+import { PlusIcon } from "lucide-react";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -40,6 +42,14 @@ export default function RootLayout({
             },
           }}
         />
+        <div className="fixed right-6 bottom-6 z-50">
+          <Link href="/add">
+            <button className="flex h-14 w-14 items-center justify-center rounded-full bg-blue-700 text-white shadow-lg transition-transform hover:scale-105 hover:bg-blue-800">
+              <PlusIcon size={24} />
+              <span className="sr-only">Add Transaction</span>
+            </button>
+          </Link>
+        </div>
       </body>
     </html>
   );

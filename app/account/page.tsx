@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { useState, useEffect } from "react";
 import { toast } from "react-hot-toast";
 import { Badge } from "@/components/ui/badge";
-import { AlertCircle, CreditCard, DollarSign, User, X } from "lucide-react";
+import { AlertCircle, CreditCard, DollarSign, User, X, PlusIcon } from "lucide-react";
 import { createClient } from "@supabase/supabase-js";
 import Link from "next/link";
 
@@ -93,7 +93,7 @@ export default function AccountPage() {
                 transition={{ duration: 0.4 }}
                 className={`${
                   t.visible ? "animate-enter" : "animate-leave"
-                } ring-opacity-5 pointer-events-auto flex w-full max-w-md rounded-lg border border-red-200 bg-red-50 shadow-lg ring-1 ring-black`}
+                } ring-opacity-5 shadow-l pointer-events-auto flex w-full max-w-md rounded-lg border border-red-200 bg-red-50`}
               >
                 <div className="w-0 flex-1 p-4">
                   <div className="flex items-start">
@@ -272,6 +272,16 @@ export default function AccountPage() {
             </CardContent>
           </Card>
         </motion.div>
+
+        <div className="mb-6 flex items-center justify-between">
+          <h1 className="text-2xl font-bold">Your Transactions</h1>
+          <Link href="/add">
+            <Button className="flex items-center gap-2 bg-blue-700 hover:bg-blue-800">
+              <PlusIcon size={16} />
+              Add Transaction
+            </Button>
+          </Link>
+        </div>
 
         <motion.div
           initial={{ opacity: 0, y: 20 }}
