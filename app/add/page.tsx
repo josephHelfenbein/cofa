@@ -165,6 +165,7 @@ export default function StartCallPage() {
         location: selectedLocation,
       };
 
+      // To use hosted version replace with: https://hackknight2025-exl1.onrender.com
       const response = await fetch("http://localhost:8000/predict", {
         method: "POST",
         headers: {
