@@ -61,6 +61,7 @@ interface Transaction {
   location: string;
   receiver: string;
   amount: number;
+  suspicious: boolean;
 }
 
 export default function StartCallPage() {
@@ -115,20 +116,6 @@ export default function StartCallPage() {
     setIsSubmitting(true);
 
     try {
-      // Format the transaction data
-      const transaction: Transaction = {
-        sent_at: transactionDate.toISOString(),
-        location: selectedLocation,
-        receiver: transactionName,
-        amount: Number(transactionAmount),
-      };
-
-      // Insert the transaction into Supabase
-      const { error } = await supabase.from("transactions").insert(transaction);
-
-      if (error) {
-        throw error;
-      }
 
       const historyData = await getTransactionHistory();
 
@@ -166,7 +153,7 @@ export default function StartCallPage() {
         location: selectedLocation
       };
 
-      const response = await fetch("https://hackknight20255.onrender.com/predict", {
+      const response = await fetch("https://hackknight2025-exl1.onrender.com/predict", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -175,7 +162,24 @@ export default function StartCallPage() {
       });
 
       if (!response.ok) {
-        toast.error(`Failed to call fraud prediction model ${response.body}`);
+        throw error;
+      }
+
+      const responseData = await response.json();
+
+      // Format the transaction data
+      const transaction: Transaction = {
+        sent_at: transactionDate.toISOString(),
+        location: selectedLocation,
+        receiver: transactionName,
+        amount: Number(transactionAmount),
+        suspicious: responseData["fraud"] === 1,
+      }
+
+      // Insert the transaction into Supabase
+      const { error } = await supabase.from("transactions").insert(transaction);
+      if (error) {
+        throw error;
       }
 
       toast.success("Transaction added successfully");
