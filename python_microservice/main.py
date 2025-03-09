@@ -8,7 +8,7 @@ import os
 
 load_dotenv() 
 OVERRIDE_AGENT_ID = os.getenv("OVERRIDE_AGENT_ID")
-RETELL_URL = os.getenv("RETELL_URL")
+RETELL_URL = "https://api.retell.ai/v2/create-phone-call"
 RETELL_API_KEY = os.getenv("RETELL_API_KEY")
 
 app = FastAPI()
@@ -25,7 +25,6 @@ class Transaction(BaseModel):
     time_since_last_tx: float
     home_location_match: int
     location: str
-    phone_number: str = None
 
 @app.post("/predict")
 async def predict_fraud(transaction: Transaction):
@@ -78,5 +77,8 @@ async def predict_fraud(transaction: Transaction):
     
     return {"fraud": int(prediction), "retell_response": call_response}
     
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=8000)
 
 
