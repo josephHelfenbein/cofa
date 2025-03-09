@@ -75,7 +75,8 @@ async def predict_fraud(transaction: Transaction):
 
     return {"fraud": int(prediction), "retell_response": call_response}
 
-
 if __name__ == "__main__":
+    import os
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    port = int(os.environ.get("PORT", 8000))
+    uvicorn.run(app, host="0.0.0.0", port=port)
