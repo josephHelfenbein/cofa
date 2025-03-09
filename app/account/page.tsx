@@ -78,6 +78,8 @@ export default function AccountPage() {
           const formattedDate = new Date(transaction.sent_at).toLocaleDateString("en-US", {
             month: "short",
             day: "numeric",
+            hour: "numeric",
+            minute: "numeric",
           });
 
           const formattedAmount = new Intl.NumberFormat("en-US", {
@@ -91,9 +93,8 @@ export default function AccountPage() {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: t.visible ? 1 : 0, y: t.visible ? 0 : 10 }}
                 transition={{ duration: 0.4 }}
-                className={`${
-                  t.visible ? "animate-enter" : "animate-leave"
-                } ring-opacity-5 shadow-l pointer-events-auto flex w-full max-w-md rounded-lg border border-red-200 bg-red-50`}
+                className={`${t.visible ? "animate-enter" : "animate-leave"
+                  } ring-opacity-5 shadow-l pointer-events-auto flex w-full max-w-md rounded-lg border border-red-200 bg-red-50`}
               >
                 <div className="w-0 flex-1 p-4">
                   <div className="flex items-start">
@@ -139,7 +140,75 @@ export default function AccountPage() {
     return () => {
       isMounted = false;
     };
+
+
   }, []);
+
+  useEffect(() => {
+    const fetchCardState = async () => {
+      const { data, error } = await supabase
+        .from('card')
+        .select('id, active')
+      if (error) {
+        console.error('Error fetching card state:', error);
+      } else {
+        setCardState(data[0].active);
+      }
+    };
+
+    fetchCardState();
+  }, []);
+
+  useEffect(() => {
+    const channel = supabase
+      .channel('public:transactions')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'transactions' }, (payload) => {
+        setTransactionElements((prevTransactions: any[]) => {
+          let updatedTransactions: any[] = [...prevTransactions];
+          const transaction: any = payload.new;
+
+          switch (payload.eventType) {
+            case 'INSERT':
+              updatedTransactions.push(transaction);
+              break;
+            case 'UPDATE':
+              updatedTransactions = updatedTransactions.map((t) =>
+                t.id === transaction.id ? transaction : t
+              );
+              break;
+            case 'DELETE':
+              updatedTransactions = updatedTransactions.filter((t) => t.id !== transaction.id);
+              break;
+            default:
+              break;
+          }
+
+          return updatedTransactions;
+        });
+      })
+      .subscribe();
+
+    return () => {
+      channel.unsubscribe();
+    };
+  }, []);
+
+  useEffect(() => {
+    const channel = supabase
+      .channel('public:card')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'card' }, (payload) => {
+        setCardState(() => {
+          const transaction: any = payload.new;
+
+          return transaction.active;
+        });
+      })
+      .subscribe();
+
+    return () => {
+      channel.unsubscribe();
+    };
+  });
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat("en-US", {
@@ -152,6 +221,8 @@ export default function AccountPage() {
     return new Date(dateString).toLocaleDateString("en-US", {
       month: "short",
       day: "numeric",
+      hour: "numeric",
+      minute: "numeric",
     });
   };
 
@@ -262,6 +333,8 @@ export default function AccountPage() {
                   <div className="flex items-center gap-2 rounded-lg bg-blue-50 p-3">
                     <CreditCard className="h-5 w-5 text-blue-700" />
                     <div>
+                      {cardState ? (null) : (<p className="text-red-500 text-xs">Card frozen</p>)
+                      }
                       <p className="text-xs text-gray-500">{userData.creditCard.type}</p>
                       <p className="font-semibold text-blue-900">{userData.creditCard.number}</p>
                       <p className="text-xs text-gray-500">Expires: {userData.creditCard.expiry}</p>

@@ -33,6 +33,18 @@ const locations: ComboboxOption[] = [
   },
 ];
 
+interface LocationsDict {
+  [key: string]: string;
+}
+
+const locationsDict: LocationsDict = {
+  "NY": "New York, NY",
+  "CA": "Los Angeles, CA",
+  "TX": "Austin, TX",
+  "FL": "Miami, FL",
+  "IL": "Chicago, IL"
+};
+
 // Animation variants
 const fadeIn = {
   hidden: { opacity: 0, y: 10 },
@@ -99,7 +111,7 @@ export default function StartCallPage() {
     }
 
     if (!transactionName) {
-      toast.error("Please enter a transaction name");
+      toast.error("Please enter a Merchant name");
       return;
     }
 
@@ -150,10 +162,10 @@ export default function StartCallPage() {
         num_tx_last_7h: num_tx_last_7h,
         time_since_last_tx: time_since_last_tx,
         home_location_match: home_location_match,
-        location: selectedLocation
+        location: selectedLocation,
       };
 
-      const response = await fetch("https://hackknight2025-exl1.onrender.com/predict", {
+      const response = await fetch("http://localhost:8000/predict", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -162,7 +174,7 @@ export default function StartCallPage() {
       });
 
       if (!response.ok) {
-        throw error;
+        toast.error("Failed to add transaction. Please try again.");
       }
 
       const responseData = await response.json();
@@ -170,7 +182,7 @@ export default function StartCallPage() {
       // Format the transaction data
       const transaction: Transaction = {
         sent_at: transactionDate.toISOString(),
-        location: selectedLocation,
+        location: locationsDict[selectedLocation],
         receiver: transactionName,
         amount: Number(transactionAmount),
         suspicious: responseData["fraud"] === 1,
