@@ -75,6 +75,21 @@ export default function StartCallPage() {
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
   );
 
+  const getTransactionHistory = async () => {
+    const { data, error } = await supabase
+      .from("transactions")
+      .select("*")
+      .order("sent_at", { ascending: false })
+      .limit(10);
+
+    if (error) {
+      console.error("Error fetching transaction history:", error);
+      return null;
+    }
+
+    return data;
+  };
+
   const handleAddTransaction = async () => {
     // Validate inputs
     if (!selectedLocation) {
@@ -113,6 +128,54 @@ export default function StartCallPage() {
 
       if (error) {
         throw error;
+      }
+
+      const historyData = await getTransactionHistory();
+
+      const amount = Number(transactionAmount);
+      const hour = transactionDate.getHours(); // Extract just the hour (0-23)
+
+      // Calculate average amount from last 10 transactions
+      const avg_amount_last_10 = historyData && historyData.length > 0
+        ? historyData.reduce((sum, tx) => sum + tx.amount, 0) / historyData.length
+        : amount;
+
+      // Calculate number of transactions in last 7 hours
+      const sevenHoursAgo = new Date(transactionDate);
+      sevenHoursAgo.setHours(sevenHoursAgo.getHours() - 7);
+      const num_tx_last_7h = historyData
+        ? historyData.filter(tx => new Date(tx.sent_at) >= sevenHoursAgo).length
+        : 0;
+
+      // Calculate time since last transaction in hours
+      const time_since_last_tx = historyData && historyData.length > 0
+        ? (transactionDate.getTime() - new Date(historyData[0].sent_at).getTime()) / (1000 * 60 * 60)
+        : 24; // Default to 24 hours if no previous transactions
+
+      // Check if location matches home location (assuming home is NY)
+      const home_location_match = selectedLocation === "NY" ? 1 : 0;
+
+      // Create prediction payload
+      const predictionPayload = {
+        amount: amount,
+        hour: hour,
+        avg_amount_last_10: avg_amount_last_10,
+        num_tx_last_7h: num_tx_last_7h,
+        time_since_last_tx: time_since_last_tx,
+        home_location_match: home_location_match,
+        location: selectedLocation
+      };
+
+      const response = await fetch("https://hackknight20255.onrender.com/predict", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(predictionPayload)
+      });
+
+      if (!response.ok) {
+        toast.error(`Failed to call fraud prediction model ${response.body}`);
       }
 
       toast.success("Transaction added successfully");

@@ -6,15 +6,25 @@ import joblib
 import numpy as np
 import requests
 from dotenv import load_dotenv
+from fastapi.middleware.cors import CORSMiddleware
 import os
 
 load_dotenv()
+
 OVERRIDE_AGENT_ID = os.getenv("OVERRIDE_AGENT_ID")
 RETELL_URL = "https://api.retell.ai/v2/create-phone-call"
 RETELL_API_KEY = os.getenv("RETELL_API_KEY")
 
 
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Allow all origins
+    allow_credentials=True,
+    allow_methods=["*"],  # Allow all methods
+    allow_headers=["*"],  # Allow all headers
+)
 
 model = joblib.load("xgb_fraud_model.pkl")
 scaler = joblib.load("scaler.pkl")
@@ -29,6 +39,7 @@ class Transaction(BaseModel):
     time_since_last_tx: float
     home_location_match: int
     location: str
+
 
 @app.post("/predict")
 async def predict_fraud(transaction: Transaction):
@@ -59,7 +70,7 @@ async def predict_fraud(transaction: Transaction):
         from_number = "+15054216680"  # +1 (505) 421-6680
         to_number = "+13473488237"  # +1 (347) 348-8237
 
-            # "override_agent_id": OVERRIDE_AGENT_ID,
+        # "override_agent_id": OVERRIDE_AGENT_ID,
 
         client = Retell(
             api_key=RETELL_API_KEY,
@@ -74,6 +85,7 @@ async def predict_fraud(transaction: Transaction):
             call_response = {"error": str(e)}
 
     return {"fraud": int(prediction), "retell_response": call_response}
+
 
 if __name__ == "__main__":
     import uvicorn
