@@ -29,10 +29,6 @@ class Transaction(BaseModel):
     time_since_last_tx: float
     home_location_match: int
     location: str
-<<<<<<< Updated upstream
-=======
-
->>>>>>> Stashed changes
 
 @app.post("/predict")
 async def predict_fraud(transaction: Transaction):
@@ -78,13 +74,6 @@ async def predict_fraud(transaction: Transaction):
             call_response = {"error": str(e)}
 
     return {"fraud": int(prediction), "retell_response": call_response}
-<<<<<<< Updated upstream
-    
-if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
-=======
->>>>>>> Stashed changes
 
 
 if __name__ == "__main__":
