@@ -153,7 +153,7 @@ Project Link: [https://github.com/josephHelfenbein/hackknight2025](https://githu
 
 This project was submitted to the HackKnight 2025 hackathon for the Financial track.
 
-Devpost link: [https://devpost.com/software/hackknight2025](https://devpost.com/software/hackknight2025)
+Devpost link: [https://devpost.com/software/cofa](https://devpost.com/software/cofa)
 
 * [Best README Template](https://github.com/othneildrew/Best-README-Template)
 
