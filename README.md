@@ -30,9 +30,10 @@
 <br />
 <div align="center">
 
-<a href="https://github.com/josephHelfenbein/hackknight2025">
-
-  </a><h3>CUNY One Fraud Agent (COFA)</h3>
+  <a href="https://github.com/josephHelfenbein/hackknight2025">
+    <img src="public/cofa.svg" alt="Logo" width="80">
+  </a>
+  <h3>CUNY One Fraud Agent (COFA)</h3>
 
   <p align="center">
     AI fraud detection with real-time alerts and voice agent actions
