@@ -1,4 +1,7 @@
+<img width="1000" height="227" alt="Screenshot 2025-07-26 at 6 23 30 PM" src="https://github.com/user-attachments/assets/1e936e90-d169-4975-91ad-2502228e6edf" />
+
 <!-- Improved compatibility of back to top link: See: https://github.com/josephHelfenbein/hackknight2025/pull/73 -->
+
 <a id="readme-top"></a>
 <!--
 *** Thanks for checking out the Best-README-Template. If you have a suggestion
