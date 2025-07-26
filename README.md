@@ -1,5 +1,3 @@
-<img width="1000" height="227" alt="Screenshot 2025-07-26 at 6 23 30 PM" src="https://github.com/user-attachments/assets/1e936e90-d169-4975-91ad-2502228e6edf" />
-
 <!-- Improved compatibility of back to top link: See: https://github.com/josephHelfenbein/hackknight2025/pull/73 -->
 
 <a id="readme-top"></a>
@@ -74,6 +72,8 @@
 
 <!-- ABOUT THE PROJECT -->
 ## About The Project
+
+<img width="1000" height="227" alt="Screenshot 2025-07-26 at 6 23 30 PM" src="https://github.com/user-attachments/assets/1e936e90-d169-4975-91ad-2502228e6edf" />
 
 COFA (CUNY One Fraud Agent) is an AI-powered fraud detection and response system designed to help users monitor credit card transactions in real-time. It leverages FastAPI, Supabase, and Retell AI to detect suspicious activity, notify users, and facilitate immediate action.
 
