@@ -130,6 +130,7 @@ Here are the steps to run the project locally if you want to develop your own pr
 ### Run Project
 
 You can run the frontend using 
+
 ```sh
 npm run server
 ```
